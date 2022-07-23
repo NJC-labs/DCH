@@ -1,0 +1,112 @@
+#%RAML 1.0
+title: dch-mongodb-sapi
+description:  System API - mongoDB.
+version: v1
+baseUri: https://anypoint.mulesoft.com/api/v1/
+mediaType: application/json
+protocols: [HTTPS,HTTP]
+
+documentation:
+  - title: dch-mongodb-sapi
+    content: Interface to mongoDB.
+
+securitySchemes: 
+  clientIdPolicy: !include /client-id-enforcement-scheme.raml  
+
+uses:
+  comLib: /common-error-responses-header-traits-library.raml
+
+types:
+  postStoreAssetsRequest: !include /datatypes/request/assets-store-request-dataType.raml
+  postStoreAssetsResponse: !include /datatypes/response/assets-store-response-dataType.raml
+  putPublishedAssetsRequest: !include /datatypes/request/assets-store-request-dataType.raml
+  putPublishedAssetsResponse: !include /datatypes/response/assets-store-response-dataType.raml
+  getExpiredAssetsResponse: !include /datatypes/response/assets-expired-response-dataType.raml
+  getStatusAssetsResponse: !include /datatypes/response/assets-status-response-dataType.raml
+
+/assets:
+  is: [comLib.400,comLib.401,comLib.404,comLib.405,comLib.415,comLib.422,comLib.500,comLib.503,comLib.504,comLib.xCorrelation]
+  securedBy:
+  - clientIdPolicy
+  post:
+    displayName: new assets
+    description: endpoint to store new assets with "status = new"
+    body:
+      application/json:
+        type: postStoreAssetsRequest
+        example: !include /examples/request/assets-store-request-example.json
+    responses:
+      201:
+        body:
+          application/json:
+            type: postStoreAssetsResponse
+            example: !include /examples/response/assets-store-response-example.json
+  get:
+    displayName: expired assets
+    description: endpoint to get expired assets
+    queryParameters:
+      expiration-time:
+        type: string
+        required: true
+        description: Enter expiry date of assets 
+    responses:
+      200:
+        body:
+          application/json:
+            type: getExpiredAssetsResponse
+            example: !include /examples/response/assets-expired-response-example.json
+  /{id}:
+    is: [comLib.400,comLib.401,comLib.404,comLib.405,comLib.415,comLib.422,comLib.500,comLib.503,comLib.504,comLib.xCorrelation]
+    securedBy:
+    - clientIdPolicy
+    delete:
+      displayName: expired assets by id
+      description: endpoint to delete expired assets
+      responses:
+        200:
+          body:
+            example: {"message":"asset deleted successfully"}  
+    put:
+      displayName: existing assets update by id
+      description: endpoint to update published assets with "status = published"
+      body:
+        application/json:
+          type: putPublishedAssetsRequest
+          example: !include /examples/request/assets-published-request-example.json
+      responses:
+        201:
+          body:
+            application/json:
+              type: putPublishedAssetsResponse
+              example: !include /examples/response/assets-published-response-example.json 
+/health:
+  is: [comLib.400,comLib.401,comLib.404,comLib.405,comLib.415,comLib.422,comLib.500,comLib.503,comLib.504,comLib.xCorrelation]
+  securedBy:
+  - clientIdPolicy
+  get:
+    displayName: health status 
+    description: endpoint to get health status
+    responses:
+      200:
+        body:
+          application/json:
+            type: getStatusAssetsResponse
+            example: !include /examples/response/assets-status-response-example.json
+
+
+      
+
+
+
+
+
+
+
+
+    
+
+
+
+        
+
+      

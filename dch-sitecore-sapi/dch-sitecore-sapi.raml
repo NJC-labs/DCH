@@ -1,0 +1,85 @@
+#%RAML 1.0
+title: dch-sitecore-sapi
+description: System API - sitecore  
+version: v1
+baseUri: https://anypoint.mulesoft.com/api/v1/
+mediaType: application/json
+protocols: [HTTPS,HTTP]
+
+documentation:
+  - title: dch-sitecore-sapi
+    content: Interface to sitecore. The interface is with mock links.
+
+securitySchemes: 
+  clientIdPolicy: !include /client-id-enforcement-scheme.raml  
+
+uses:
+  comLib: /common-error-responses-header-traits-library.raml
+
+types:
+  postSearchAssetsRequest: !include /datatypes/request/assets-search-request-dataType.raml
+  postSearchAssetsReponse: !include /datatypes/response/assets-search-response-dataType.raml
+  getAssetsResponse: !include datatypes/response/assets-get-response-dataType.raml
+  putUpdatedAssetsRequest: !include datatypes/request/assets-updated-request-dataType.raml
+  putUpdatedAssetsResponse: !include datatypes/response/assets-updated-response-dataType.raml
+  getStatusAssetsResponse: !include datatypes/response/assets-status-response-dataType.raml
+
+/assets:
+  post:
+    displayName: search approved assets
+    is: [comLib.400,comLib.401,comLib.404,comLib.405,comLib.415,comLib.422,comLib.500,comLib.503,comLib.504,comLib.xCorrelation]
+    securedBy:
+    - clientIdPolicy
+    description: endpoint to get approved assets. Mock reference - http://sitecore-dch-mock-api.us-e2.cloudhub.io/search
+    body:
+      application/json:
+        type: postSearchAssetsRequest
+        example: !include /examples/request/assets-search-request-example.json
+    responses:
+      201:
+        body:
+          application/json:
+            type: postSearchAssetsReponse
+            example: !include /examples/response/assets-approved-response-example.json
+  /{id}:
+    get:
+      displayName: get assets by id
+      is: [comLib.400,comLib.401,comLib.404,comLib.405,comLib.415,comLib.422,comLib.500,comLib.503,comLib.504,comLib.xCorrelation]
+      securedBy:
+      - clientIdPolicy
+      description: endpoint to get new assets by id. Mock reference - http://sitecore-dch-mock-api.us-e2.cloudhub.io/entities/575365
+      responses:
+        200:
+          body:
+            application/json:
+              type: getAssetsResponse
+              example: !include /examples/response/assets-new-response-example.json
+    put:
+      displayName: update assets by id
+      is: [comLib.400,comLib.401,comLib.404,comLib.405,comLib.415,comLib.422,comLib.500,comLib.503,comLib.504,comLib.xCorrelation]
+      securedBy:
+      - clientIdPolicy
+      description: endpoint to put updated/enriched assets. Mock reference - http://sitecore-dch-mock-api.us-e2.cloudhub.io/entities/4668750
+      body:
+        application/json:
+          type: putUpdatedAssetsRequest
+          example: !include /examples/request/assets-updated-request-example.json
+      responses:
+        201:
+          body:
+            application/json:
+              type: putUpdatedAssetsResponse
+              example: !include /examples/response/assets-updated-response-example.json
+/health:
+  is: [comLib.400,comLib.401,comLib.404,comLib.405,comLib.415,comLib.422,comLib.500,comLib.503,comLib.504,comLib.xCorrelation]
+  securedBy:
+  - clientIdPolicy
+  get:
+    displayName: health status 
+    description: endpoint to get health status
+    responses:
+      200:
+        body:
+          application/json:
+            type: getStatusAssetsResponse
+            example: !include /examples/response/assets-status-response-example.json

@@ -1,0 +1,38 @@
+#%RAML 1.0 DataType
+type: object
+properties:
+  defaults:
+    type: string
+    required: false
+  culture:
+    type: string
+    required: false
+  skip:
+    type: integer
+    required: false
+  take:
+    type: integer
+    required: false
+  query:
+    type: string
+    required: false
+  filters:
+    type: array
+    required: false
+  fulltext:
+    type: array
+    required: false
+  view:
+    type: string
+    required: false
+  sorting:
+    type: object
+    required: false
+    properties:
+      field:
+        type: string
+        required: false
+      asc:
+        type: boolean
+        required: false
+      

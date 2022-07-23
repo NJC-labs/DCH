@@ -1,0 +1,29 @@
+#%RAML 1.0 DataType
+type: array
+items:
+  type: object
+  properties:
+    assetId:
+      type: integer
+      required: true
+    assetMimeType:
+      type: string
+      required: true
+    assetName:
+      type: string
+      required: true
+    status:
+      type: string
+      required: true
+    expirationTime:
+      type: string
+      required: true
+    assetPayload:
+      type: object
+      required: true
+    createdDate:
+      type: datetime-only
+      required: false
+    updatedDate:
+      type: datetime-only
+      required: false

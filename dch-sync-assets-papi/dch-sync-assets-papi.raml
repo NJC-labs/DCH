@@ -1,0 +1,84 @@
+#%RAML 1.0
+title: dch-sync-assets-papi
+description: Process API - synchronize assets  
+version: v1
+baseUri: https://anypoint.mulesoft.com/api/v1/
+mediaType: application/json
+protocols: [HTTPS,HTTP]
+
+documentation:
+  - title: dch-sync-assets-papi
+    content: Synchronize asset between sitecore,database and s3.
+
+securitySchemes: 
+  clientIdPolicy: !include /client-id-enforcement-scheme.raml  
+
+uses:
+  comLib: /common-error-responses-header-traits-library.raml
+
+types:
+  postSearchAssetsRequest: !include /datatypes/request/assets-search-request-dataType.raml
+  postSearchAssetsReponse: !include /datatypes/response/assets-search-response-dataType.raml
+  putPublishedAssetsRequest: !include /datatypes/request/assets-store-request-dataType.raml
+  putPublishedAssetsResponse: !include /datatypes/response/assets-store-response-dataType.raml
+  getExpiredAssetsResponse: !include /datatypes/response/assets-expired-response-dataType.raml
+  
+
+/assets:
+  post:
+    displayName: get approved assets
+    description: endpoint to get approved assets from sitecore. Mock reference - http://sitecore-dch-mock-api.us-e2.cloudhub.io/search
+    is: [comLib.400,comLib.401,comLib.404,comLib.405,comLib.415,comLib.422,comLib.500,comLib.503,comLib.504,comLib.xCorrelation]
+    securedBy:
+    - clientIdPolicy
+    body:
+      application/json:
+        type: postSearchAssetsRequest
+        example: !include /examples/request/assets-search-request-example.json
+    responses:
+      201:
+        body:
+          application/json:
+            type: postSearchAssetsReponse
+            example: !include /examples/response/assets-approved-response-example.json
+  get:
+    displayName: get expired assets
+    description: endpoint to get expired assets from database
+    queryParameters:
+      expiration-time:
+        type: string
+        required: true
+        description: Enter expiry date of assets 
+    responses:
+      200:
+        body:
+          application/json:
+            type: getExpiredAssetsResponse
+            example: !include /examples/response/assets-expired-response-example.json
+  /{id}:
+    is: [comLib.400,comLib.401,comLib.404,comLib.405,comLib.415,comLib.422,comLib.500,comLib.503,comLib.504,comLib.xCorrelation]
+    securedBy:
+    - clientIdPolicy
+    delete:
+      displayName: delete expired assets by id
+      description: endpoint to delete expired assets from database
+      responses:
+        200:
+          body:
+            example: {"message":"asset deleted successfully"}  
+    put:
+      displayName: existing assets update by id
+      description: endpoint to update published assets with "status = published"/"new" in database
+      body:
+        application/json:
+          type: putPublishedAssetsRequest
+          example: !include /examples/request/assets-published-request-example.json
+      responses:
+        201:
+          body:
+            application/json:
+              type: putPublishedAssetsResponse
+              example: !include /examples/response/assets-published-response-example.json 
+  
+  
+  

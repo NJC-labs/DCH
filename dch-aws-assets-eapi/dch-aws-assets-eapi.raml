@@ -1,0 +1,60 @@
+#%RAML 1.0
+title: dch-aws-assets-eapi
+description: Experience API - request assets  
+version: v1
+baseUri: https://anypoint.mulesoft.com/api/v1/
+mediaType: application/json
+protocols: [HTTPS,HTTP]
+
+documentation:
+  - title: dch-aws-assets-papi
+    content: Request assets.
+
+securitySchemes: 
+  clientIdPolicy: !include /client-id-enforcement-scheme.raml  
+
+uses:
+  comLib: /common-error-responses-header-traits-library.raml
+
+types:
+  publishAssetsRequest: !include /datatypes/request/publish-assets-request-dataType.raml
+  checkHealthResponse:
+  
+
+/publish:
+  is: [comLib.400,comLib.401,comLib.404,comLib.405,comLib.415,comLib.422,comLib.500,comLib.503,comLib.504,comLib.xCorrelation]
+  securedBy:
+  - clientIdPolicy
+  post:
+    displayName: Publish assets
+    description: Invoked by AWS lambda externally
+    body:
+      application/json:
+        type: publishAssetsRequest
+        example: !include examples/request/publish-assets-request-example.json
+    responses:
+      201:
+        body:
+          example:
+            {"message": "Published successfully"}
+/ping:
+  is: [comLib.400,comLib.401,comLib.404,comLib.405,comLib.415,comLib.422,comLib.500,comLib.503,comLib.504,comLib.xCorrelation]
+  securedBy:
+  - clientIdPolicy
+  get:
+    displayName: Check health status
+    description: Check the health status of connections
+    responses:
+      200:
+        body:
+          application/json:
+            type: checkHealthResponse
+            example: !include examples/response/check-health-response-example.json
+
+          
+        
+          
+            
+
+
+          
